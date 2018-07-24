@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/client.dir/test_client.o CMakeFiles/client.dir/AVRClient.o CMakeFiles/client.dir/AVRServer.o  -o client -rdynamic -lboost_system -lboost_thread -lboost_chrono -lboost_date_time -lboost_atomic -lpthread 
