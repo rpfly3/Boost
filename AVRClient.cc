@@ -1,4 +1,5 @@
-#include<boost/asio.hpp>
+#include "AVRClient.hpp"
+#include <iostream>
 
 AVRClient::AVRClient()
 {
@@ -22,7 +23,7 @@ AVRClient::AVRClient()
     boost::asio::io_service io;
     mSocket = std::make_shared<boost::asio::ip::tcp::socket>(io, endPoint.protocol());
 
-    mSock->connect(endPoint, ret);
+    mSocket->connect(endPoint, ret);
     if(ret.value() != 0)
     {
         std::cerr << "Failed to connect the socket ! Error code = "
@@ -56,7 +57,7 @@ AVRClient::AVRClient(std::string server_ip_address)
     boost::asio::io_service io;
     mSocket = std::make_shared<boost::asio::ip::tcp::socket>(io, endPoint.protocol());
 
-    mSock->connect(endPoint, ret);
+    mSocket->connect(endPoint, ret);
     if(ret.value() != 0)
     {
         std::cerr << "Failed to connect the socket ! Error code = "
