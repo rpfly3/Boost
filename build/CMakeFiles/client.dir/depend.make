@@ -7,5 +7,6 @@ CMakeFiles/client.dir/AVRClient.o: ../AVRClient.hpp
 CMakeFiles/client.dir/AVRServer.o: ../AVRServer.cc
 CMakeFiles/client.dir/AVRServer.o: ../AVRServer.hpp
 
+CMakeFiles/client.dir/test_client.o: ../AVRClient.hpp
 CMakeFiles/client.dir/test_client.o: ../test_client.cc
 

@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include "AVRClient.hpp"
 
 namespace
 {
@@ -15,23 +16,8 @@ int main(int, char **)
 {
 	signal(SIGINT, shutdown);
 
-	boost::asio::io_service io;
-	boost::asio::io_service::work work(io);
-
-	boost::thread t1(boost::bind(&boost::asio::io_service::run, &io));
-	boost::thread t2(boost::bind(&boost::asio::io_service::run, &io));
-	boost::thread t3(boost::bind(&boost::asio::io_service::run, &io));
-	boost::thread t4(boost::bind(&boost::asio::io_service::run, &io));
-
-	boost::asio::ip::tcp::socket socket(io);
-	auto endpoint = boost::asio::ip::tcp::resolver(io).resolve({ 
-	    "127.0.0.1", "1234" });
-	boost::asio::connect(socket, endpoint);
-
-	// options to test
-	socket.set_option(boost::asio::ip::tcp::no_delay(true)); 
-	socket.set_option(boost::asio::socket_base::receive_buffer_size(1920 * 1080 * 4));
-	socket.set_option(boost::asio::socket_base::send_buffer_size(1920 * 1080 * 4));
+    AVRClient avrClient;
+    avrClient.Connect();
 
 	std::vector<unsigned char> buffer(1920 * 1080 * 4, 0);
 	buffer.back() = 'e';
@@ -46,7 +32,7 @@ int main(int, char **)
 	while (keepGoing)
 	{
 		// blocks during send
-		boost::asio::write(socket, boost::asio::buffer(buffer));
+		boost::asio::write(*avrClient.mPtrSocket, boost::asio::buffer(buffer));
 		//socket.send(boost::asio::buffer(buffer));
 
 		// accumulate bytes sent
@@ -71,12 +57,7 @@ int main(int, char **)
 		}
 	}
 
-	io.stop();
+    avrClient.Shutdown();
 
-	t1.join();
-	t2.join();
-	t3.join();
-	t4.join();
-
-	std::printf("client: goodbyte\n");
+	std::cout << "Client: GoodByte" << std::endl;
 }

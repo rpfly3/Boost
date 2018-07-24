@@ -3,66 +3,46 @@
 
 AVRClient::AVRClient()
 {
+    // To prevent io_service from running out of work
+    mPtrWork = std::make_shared<boost::asio::io_service::work>(mIO);
+    // The working thread
+    mPtrThread = std::make_shared<boost::thread>(
+        boost::thread(boost::bind(&boost::asio::io_service::run, &mIO)));
+    mPtrSocket = std::make_shared<boost::asio::ip::tcp::socket>(mIO);
+
     // Parse IP address and build endpoint
     mRawServerIPAddress = "127.0.0.1";
-    mPortNum = 9973;
-
-    boost::system::error_code ret;
-    boost::asio::ip::address serverIPAddress = 
-        boost::asio::ip::address::from_string(mRawServerIPAddress, ret);
-    if(ret.value() != 0)
-    {
-        std::cerr << "Failed to parse IP address. Error code = "
-                  << ret.value() << ". Message: " << ret.message()
-                  << " at " << __LINE__ << std::endl;
-        exit(-1);
-    }
-    boost::asio::ip::tcp::endpoint endPoint(serverIPAddress, mPortNum);
-
-    // Build socket
-    boost::asio::io_service io;
-    mSocket = std::make_shared<boost::asio::ip::tcp::socket>(io, endPoint.protocol());
-
-    mSocket->connect(endPoint, ret);
-    if(ret.value() != 0)
-    {
-        std::cerr << "Failed to connect the socket ! Error code = "
-                  << ret.value() << ". Message: " << ret.message()
-                  << " at " << __LINE__ << std::endl;
-        exit(-1);
-    }
+    mPortNum = 1234;
 }
 
 AVRClient::AVRClient(std::string server_ip_address)
 {
+    // To prevent io_service from running out of work
+    mPtrWork = std::make_shared<boost::asio::io_service::work>(mIO);
+    // The working thread
+    mPtrThread = std::make_shared<boost::thread>(
+        boost::thread(boost::bind(&boost::asio::io_service::run, &mIO)));
+    mPtrSocket = std::make_shared<boost::asio::ip::tcp::socket>(mIO);
+
     // Parse IP address and build endpoint
     mRawServerIPAddress = server_ip_address;
-    mPortNum = 9973;
+    mPortNum = 1234;
+}
 
-    boost::system::error_code ret;
-    boost::asio::ip::address serverIPAddress = 
-        boost::asio::ip::address::from_string(mRawServerIPAddress, ret);
+void AVRClient::Connect()
+{
+	auto endpoint = boost::asio::ip::tcp::resolver(mIO).resolve({ 
+	    mRawServerIPAddress.c_str(), "1234" });
+	boost::asio::connect(*mPtrSocket, endpoint);
 
-    if(ret.value() != 0)
-    {
-        std::cerr << "Failed to parse IP address. Error code = "
-                  << ret.value() << ". Message: " << ret.message()
-                  << " at " << __LINE__ << std::endl;
-        exit(-1);
-    }
+	// options to test
+    mPtrSocket->set_option(boost::asio::ip::tcp::no_delay(true)); 
+	mPtrSocket->set_option(boost::asio::socket_base::receive_buffer_size(1920 * 1080 * 4));
+	mPtrSocket->set_option(boost::asio::socket_base::send_buffer_size(1920 * 1080 * 4));
+}
 
-    boost::asio::ip::tcp::endpoint endPoint(serverIPAddress, mPortNum);
-
-    // Build socket
-    boost::asio::io_service io;
-    mSocket = std::make_shared<boost::asio::ip::tcp::socket>(io, endPoint.protocol());
-
-    mSocket->connect(endPoint, ret);
-    if(ret.value() != 0)
-    {
-        std::cerr << "Failed to connect the socket ! Error code = "
-                  << ret.value() << ". Message: " << ret.message()
-                  << " at " << __LINE__ << std::endl;
-        exit(-1);
-    }
+void AVRClient::Shutdown()
+{
+    mIO.stop();
+	mPtrThread->join();
 }

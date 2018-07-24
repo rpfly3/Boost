@@ -15,6 +15,10 @@ iostream
 /home/pengfei/Documents/test/Boost/AVRClient.hpp
 boost/asio.hpp
 -
+boost/thread/thread.hpp
+-
+string
+-
 
 /home/pengfei/Documents/test/Boost/AVRServer.cc
 AVRServer.hpp
