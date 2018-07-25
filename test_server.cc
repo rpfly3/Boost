@@ -1,10 +1,16 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <deque>
 #include <signal.h>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include "AVRServer.hpp"
+
+typedef std::deque<AVRMessage> AVRMessageQueue;
+
+AVRMessageQueue avr_message_queue;
+
 namespace
 {
 bool keepGoing = true;
@@ -15,14 +21,13 @@ void shutdown(int)
 
 std::size_t bytesAccum = 0;
 void justReceive(boost::system::error_code ec, std::size_t bytesReceived,
-    boost::asio::ip::tcp::socket &socket, std::vector<unsigned char> &buffer)
+    boost::asio::ip::tcp::socket &socket, AVRMessage& receive_message)
 {
+	char* buffer = receive_message.GetHeader();
 	bytesAccum += bytesReceived;
-
-	auto end = buffer.begin() + bytesReceived;
-	for (auto it = buffer.begin(); it != end; ++it)
+	for (size_t it = 0; it != bytesReceived; ++it)
 	{
-		if (*it == 'e')
+		if (buffer[it] == 'e')
 		{
 			std::printf("server got: %lu\n", bytesAccum);
 			bytesAccum = 0;
@@ -30,10 +35,10 @@ void justReceive(boost::system::error_code ec, std::size_t bytesReceived,
 	}
 
 	socket.async_receive(
-	    boost::asio::buffer(buffer, 2048),
+	    boost::asio::buffer(receive_message.GetHeader(), 2048),
 	    0,
 	    boost::bind(justReceive, _1, _2, boost::ref(socket), 
-	                                     boost::ref(buffer)));
+	                                    boost::ref(receive_message)));
 }
 }
 

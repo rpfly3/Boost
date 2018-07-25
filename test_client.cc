@@ -16,7 +16,7 @@ int main(int, char **)
 {
 	signal(SIGINT, shutdown);
 
-    AVRClient avrClient;
+    AVRClient avrClient("127.0.0.1");
     avrClient.Connect();
 
 	std::vector<unsigned char> buffer(1920 * 1080 * 4, 0);
@@ -33,28 +33,7 @@ int main(int, char **)
 	{
 		// blocks during send
 		boost::asio::write(*avrClient.mPtrSocket, boost::asio::buffer(buffer));
-		//socket.send(boost::asio::buffer(buffer));
-
-		// accumulate bytes sent
-		bytesSent += buffer.size();
-
-		// accumulate time spent sending
-		delta += std::chrono::system_clock::now() - last;
-		last = std::chrono::system_clock::now();
-
-		// print information periodically
-		if (delta.count() >= 5.0) 
-		{
-			std::printf("Mbytes/sec: %f, Gbytes/sec: %f, Mbits/sec: %f, Gbits/sec: %f\n",
-			            bytesSent / 1.0e6 / delta.count(),
-			            bytesSent / 1.0e9 / delta.count(),
-			            8 * bytesSent / 1.0e6 / delta.count(),
-			            8 * bytesSent / 1.0e9 / delta.count());
-
-			// reset accumulators
-			bytesSent = 0;
-			delta = std::chrono::seconds(0);
-		}
+		std::cout << "Buffer size: " << buffer.size() << std::endl;
 	}
 
     avrClient.Shutdown();

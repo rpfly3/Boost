@@ -3,7 +3,7 @@
 #include <boost/bind.hpp>
 
 
-AVRServer::AVRServer() : mVBuffer(2048, 0)
+AVRServer::AVRServer()
 {
 	// To prevent io_service from running out of work
     mPtrWork = std::make_shared<boost::asio::io_service::work>(mIO);
@@ -16,7 +16,7 @@ AVRServer::AVRServer() : mVBuffer(2048, 0)
 	        boost::asio::ip::address::from_string("127.0.0.1"), 1234));
 }
 
-AVRServer::AVRServer(std::string my_ip_address) : mVBuffer(2048, 0)
+AVRServer::AVRServer(std::string my_ip_address)
 {
 	// To prevent io_service from running out of work
     mPtrWork = std::make_shared<boost::asio::io_service::work>(mIO);
@@ -38,10 +38,10 @@ void AVRServer::AcceptHandler(boost::system::error_code ec)
     mPtrSocket->set_option(boost::asio::socket_base::send_buffer_size(1920 * 1080 * 4));
 
     mPtrSocket->async_receive(
-        boost::asio::buffer(mVBuffer, 2048),
+        boost::asio::buffer(mReceivedMessage.GetHeader(), 2048),
         0,
         boost::bind(mPtrReceiveHandler, _1, _2, boost::ref(*mPtrSocket), 
-                                         boost::ref(mVBuffer)));
+                                        boost::ref(mReceivedMessage)));
 }
 
 void AVRServer::Accept()
