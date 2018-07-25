@@ -20,6 +20,8 @@ boost/thread/thread.hpp
 string
 -
 
+/home/pengfei/Documents/test/Boost/AVRMessage.hpp
+
 /home/pengfei/Documents/test/Boost/AVRServer.cc
 AVRServer.hpp
 /home/pengfei/Documents/test/Boost/AVRServer.hpp
@@ -37,6 +39,8 @@ string
 -
 vector
 -
+AVRMessage.hpp
+/home/pengfei/Documents/test/Boost/AVRMessage.hpp
 
 /home/pengfei/Documents/test/Boost/test_client.cc
 thread

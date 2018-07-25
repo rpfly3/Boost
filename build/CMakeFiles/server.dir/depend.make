@@ -4,9 +4,11 @@
 CMakeFiles/server.dir/AVRClient.o: ../AVRClient.cc
 CMakeFiles/server.dir/AVRClient.o: ../AVRClient.hpp
 
+CMakeFiles/server.dir/AVRServer.o: ../AVRMessage.hpp
 CMakeFiles/server.dir/AVRServer.o: ../AVRServer.cc
 CMakeFiles/server.dir/AVRServer.o: ../AVRServer.hpp
 
+CMakeFiles/server.dir/test_server.o: ../AVRMessage.hpp
 CMakeFiles/server.dir/test_server.o: ../AVRServer.hpp
 CMakeFiles/server.dir/test_server.o: ../test_server.cc
 

@@ -5,6 +5,7 @@ CMakeFiles/client.dir/AVRClient.o
  /home/pengfei/Documents/test/Boost/AVRClient.cc
  /home/pengfei/Documents/test/Boost/AVRClient.hpp
 CMakeFiles/client.dir/AVRServer.o
+ /home/pengfei/Documents/test/Boost/AVRMessage.hpp
  /home/pengfei/Documents/test/Boost/AVRServer.cc
  /home/pengfei/Documents/test/Boost/AVRServer.hpp
 CMakeFiles/client.dir/test_client.o
